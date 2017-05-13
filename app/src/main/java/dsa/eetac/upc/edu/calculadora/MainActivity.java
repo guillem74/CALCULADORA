@@ -1,6 +1,6 @@
 package dsa.eetac.upc.edu.calculadora;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,154 +8,156 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
-    String tag = "Main:"; // tag que indica el ciclo de vida de la app
-    String operacio;
+    private String tag="Events";
+    private List<Operation> opsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(tag, "Event onCreate()");
+        Log.d(tag, "Event a onCreate()");
+        opsList=new ArrayList<>();
     }
 
     @Override
-    protected void onStart() {
+    public void onStart(){
         super.onStart();
-        Log.d(tag, "Event onStart()");
+        Log.d(tag,"Event a onStart()");
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(tag, "Event onResume()");
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(tag, "Event onPause()");
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(tag, "Event onStop()");
-
-    }
-
-    @Override
-    protected void onRestart() {
+    public void onRestart(){
         super.onRestart();
-        Log.d(tag, "Event onRestart()");
-
+        Log.d(tag,"Event a onTetart()");
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(tag, "Event onDestroy()");
+    public void result(View v){
+        TextView result = (TextView) findViewById(R.id.result);//Obtenemos el valor del textView result
+        EditText num1 = (EditText) findViewById(R.id.num1);//Obtenemos los valores de los campos donde hemos introducido los valores
+        EditText num2 = (EditText) findViewById(R.id.num2);
+        int n1=0;
+        int n2=0;
+        int res = 0;
 
-    }
+        try {//probamos de obtener valores para detectar si los campos están vacíos
+            n1 = Integer.parseInt(num1.getText().toString());
+            n2 = Integer.parseInt(num2.getText().toString());
+            RadioGroup rg=(RadioGroup) findViewById(R.id.operations);//obtenemos la operacion
+            int seleccion=rg.getCheckedRadioButtonId();//obtenemos el id del radiobutton seleccionado
+            RadioButton rdio=(RadioButton) findViewById(seleccion);//creamos un radio button nuevo a partir de esa id
+            String op=rdio.getText().toString();//obtenemos el texto de ese radiobutton
+            StringBuilder sol=new StringBuilder();//creamos el StringBuilder que contendrá la solución
 
-    //RadioGroup opcions
-    public void onRadioButtonClicked(View view) {
-        boolean checked = ((RadioButton) view).isChecked();
-        operacio = null;
-        switch (view.getId()) {
-            case R.id.division:
-                if (checked)
-                    // divisió
-                    operacio = "/";
-                break;
-            case R.id.multiplicacion:
-                if (checked)
-                    // multiplicació
-                    operacio = "*";
-                break;
-            case R.id.resta:
-                if (checked)
-                    // resta
-                    operacio = "-";
-                break;
-            case R.id.suma:
-                if (checked)
-                    // suma
-                    operacio = "+";
-                break;
+            if (op.equals("+")){//buscamos la solución y realizamos la operacion correspondiente
+                sol.append(n2+n1);
+                res = n2+n1;
+                opsList.add(new Operation(n1,n2,res,op));
+
+            }
+            if (op.equals("-")){
+                sol.append(n2-n1);
+                res = n2-n1;
+                opsList.add(new Operation(n1,n2,res,op));
+            }
+            if (op.equals("*")){
+                sol.append(n2*n1);
+                res = n2*n1;
+                opsList.add(new Operation(n1,n2,res,op));
+            }
+            if (op.equals("/")){
+                if (n1 == 0){
+                    sol.append("Infinity");
+                }
+                else{
+                    if (n1%n2 != 0){
+                        sol.append("0");
+                        Toast.makeText(getApplicationContext(),"Solo hacer divisiones enteras",Toast.LENGTH_LONG).show();
+                    }
+                    else{
+                        sol.append(n1 / n2);
+                        res = n1/n2;
+                        opsList.add(new Operation(n1,n2,res,op));
+                    }
+                }
+            }
+            result.setText(sol);
         }
-        Log.d(tag, "operacio: " +operacio);
-    }
-
-    public void setValuesToCero(View view){
-
-        EditText texto1 = (EditText) findViewById(R.id.num1);
-        texto1.setText("0");
-        EditText texto2 = (EditText) findViewById(R.id.num2);
-        texto2.setText("0");
-        EditText texto3 = (EditText) findViewById(R.id.res);
-        texto3.setText("0");
-
-        Context context = getApplicationContext();
-        CharSequence text = "valores borrados";
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
-
-    }
-
-    public void getOperacion(View view){
-
-        try {
-            EditText editTextnum1 = (EditText) findViewById(R.id.num1);
-            float numero1 = Float.parseFloat(editTextnum1.getText().toString());
-            Log.d(tag, "num1: "+numero1);
-            EditText editTextnum2 = (EditText) findViewById(R.id.num2);
-            float numero2 = Float.parseFloat(editTextnum2.getText().toString());
-            Log.d(tag, "num1: "+numero2);
-
-            float sol = 0;
-            if ("/".equals(operacio)) {
-                sol = numero1 / numero2;
-            }
-            if ("*".equals(operacio)) {
-                sol = numero1 * numero2;
-            }
-            if ("-".equals(operacio)) {
-                sol = numero1 - numero2;
-            }
-            if ("+".equals(operacio)) {
-                sol = numero1 + numero2;
-            }
-            Log.d(tag, "Sol: "+sol);
-            EditText editTextRes = (EditText) findViewById(R.id.res);
-            editTextRes.setText("" + sol);
-        } catch (Exception e) {
-            //Llancem un TOAST com a missatge per indicar que falta un numero per insertar.
-            //No ho fem en cas de que sigui decimal ja que num1 i num dos estan declarats de tipus int
-            //i al textview que explica l'aplicació ja diu que han de introduir nombres enters
-
-            Context context = getApplicationContext();
-            CharSequence text = "Cal indicar els dos valors numèrics";
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-
+        catch(Exception e){  //Detectamos si alguno de los dos esta vacio
+            Toast.makeText(getApplicationContext(),"Campos vacíos o formato incorrecto",Toast.LENGTH_LONG).show();
         }
 
     }
 
-    public void goToListaOperaciones(View view){
-        Intent inb1 = new Intent(MainActivity.this,HistorialActivity.class);
-        startActivity(inb1);
+    public void reset(View v){
+        EditText num1 = (EditText) findViewById(R.id.num1);
+        EditText num2 = (EditText) findViewById(R.id.text2);
+        TextView result = (TextView) findViewById(R.id.result);
+        num1.setText("0");
+        num2.setText("0");
+        result.setText("0");
     }
 
+    public void history(View v){
+        Intent history = new Intent (getApplicationContext(),History.class);
+        Operations ops =new Operations();
+        ops.setOpsList(opsList);
+        history.putExtra("list",ops); //nombre y valor
+        startActivityForResult(history,100);
+    }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        if((requestCode == 100) && (resultCode == Activity.RESULT_OK)){
+            Bundle resultAct = data.getExtras();
+            String strestult = resultAct.getString("selected");
+            EditText num1 = (EditText) findViewById(R.id.num1);
+            EditText num2 = (EditText) findViewById(R.id.num2);
+            RadioGroup rg= (RadioGroup)findViewById(R.id.operations);
+            TextView result= (TextView)findViewById(R.id.result);
+            String[] fresult=null;
+            String[] stresult1= resultAct.getString("selected").split("=");
+            if(stresult1[0].contains("+")){
+                fresult= stresult1[0].split("\\+");
+                rg.check(R.id.sum);
+
+            }
+            if(stresult1[0].contains("-")){
+                fresult= stresult1[0].split("-");
+                rg.check(R.id.sub);
+
+            }
+            if(stresult1[0].contains("*")){
+                fresult= stresult1[0].split("\\*");
+                rg.check(R.id.mult);
+
+            }
+            if(stresult1[0].contains("/")){
+                fresult= stresult1[0].split("/");
+                rg.check(R.id.div);
+
+            }
+            num1.setText(fresult[1]);
+            num2.setText(fresult[0]);
+            result.setText("0");
+        }
+        else if (resultCode == 222){
+
+            //this.operaciones.setLength(0);
+            EditText text1 = (EditText) findViewById(R.id.num1);
+            EditText text2 = (EditText) findViewById(R.id.num2);
+            TextView result = (TextView) findViewById(R.id.result);
+            text1.setText("0");
+            text2.setText("0");
+            result.setText("0");
+
+
+        }
+    }
 }
