@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void reset(View v){
         EditText num1 = (EditText) findViewById(R.id.num1);
-        EditText num2 = (EditText) findViewById(R.id.text2);
+        EditText num2 = (EditText) findViewById(R.id.num2);
         TextView result = (TextView) findViewById(R.id.result);
         num1.setText("0");
         num2.setText("0");
