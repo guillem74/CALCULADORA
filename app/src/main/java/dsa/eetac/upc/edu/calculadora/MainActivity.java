@@ -64,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
             }
             if (op.equals("-")){
                 sol.append(n1-n2);
-                res = n2-n1;
+                res = n1-n2;
+                opsList.add(new Operation(n1,n2,res,op));
             }
             if (op.equals("*")){
                 sol.append(n2*n1);
