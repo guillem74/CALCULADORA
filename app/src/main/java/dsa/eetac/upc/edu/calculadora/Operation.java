@@ -1,15 +1,17 @@
 package dsa.eetac.upc.edu.calculadora;
 
+import java.io.Serializable;
+
 /**
  * Created by Guillem on 11/05/2017.
  */
 
-public class Operation {
+public class Operation implements Serializable {
     int num1,num2, result;
     String op;
 
     public Operation(){}
-    public Operation(int num, int num2, int result, String op){
+    public Operation(int num1, int num2, int result, String op){
         this.num1=num1;
         this.num2=num2;
         this.result=result;

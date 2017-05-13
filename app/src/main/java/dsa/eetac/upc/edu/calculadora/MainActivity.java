@@ -12,6 +12,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void result(View v){
-        TextView result = (TextView) findViewById(R.id.result);//Obtenemos el valor del textView result
+        EditText result = (EditText) findViewById(R.id.result);//Obtenemos el valor del textView result
         EditText num1 = (EditText) findViewById(R.id.num1);//Obtenemos los valores de los campos donde hemos introducido los valores
         EditText num2 = (EditText) findViewById(R.id.num2);
         int n1=0;
@@ -62,9 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
             if (op.equals("-")){
-                sol.append(n2-n1);
+                sol.append(n1-n2);
                 res = n2-n1;
-                opsList.add(new Operation(n1,n2,res,op));
             }
             if (op.equals("*")){
                 sol.append(n2*n1);
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     public void reset(View v){
         EditText num1 = (EditText) findViewById(R.id.num1);
         EditText num2 = (EditText) findViewById(R.id.num2);
-        TextView result = (TextView) findViewById(R.id.result);
+        EditText result = (EditText) findViewById(R.id.result);
         num1.setText("0");
         num2.setText("0");
         result.setText("0");
@@ -108,8 +108,11 @@ public class MainActivity extends AppCompatActivity {
         Intent history = new Intent (getApplicationContext(),History.class);
         Operations ops =new Operations();
         ops.setOpsList(opsList);
-        history.putExtra("list",ops); //nombre y valor
+        history.putExtra("list",(Serializable)opsList); //nombre y valor
         startActivityForResult(history,100);
+       /* Intent mIntent = new Intent(MainActivity.this, History.class);
+        mIntent.putParcelableArrayListExtra("list", opsList);
+        startActivity(mIntent);*/
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
