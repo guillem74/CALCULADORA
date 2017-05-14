@@ -4,22 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="dsa.eetac.upc.edu.History">
+    tools:context="dsa.eetac.upc.edu.calculadora.History">
 
     <TextView
         android:id="@+id/info"
         android:layout_width="228dp"
         android:layout_height="26dp"
-        android:text="Historial d'operacions"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintBottom_creator="1"
-        app:layout_constraintBottom_toTopOf="@+id/listV"
+        android:layout_marginBottom="13dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        tools:layout_constraintLeft_creator="1"
-        android:layout_marginBottom="13dp"
+        android:text="Historial d'operacions"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/listV"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintTop_creator="1" />
 
     <Button
         android:id="@+id/delete"

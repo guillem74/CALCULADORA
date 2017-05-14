@@ -19,6 +19,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private String tag="Events";
     private List<Operation> opsList;
+    private EditText num1;
+    private EditText num2;
+    private EditText result;
+    private RadioGroup rg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(tag, "Event a onCreate()");
         opsList=new ArrayList<>();
+        num1 = (EditText) findViewById(R.id.num1);
+        num2 = (EditText) findViewById(R.id.num2);
+        result = (EditText) findViewById(R.id.result);
+        rg=(RadioGroup) findViewById(R.id.operations);
     }
 
     @Override
@@ -77,9 +85,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void result(View v){
-        EditText result = (EditText) findViewById(R.id.result);//Obtenemos el valor del textView result
-        EditText num1 = (EditText) findViewById(R.id.num1);//Obtenemos los valores de los campos donde hemos introducido los valores
-        EditText num2 = (EditText) findViewById(R.id.num2);
         int n1=0;
         int n2=0;
         int res = 0;
@@ -87,27 +92,23 @@ public class MainActivity extends AppCompatActivity {
         try {//probamos de obtener valores para detectar si los campos están vacíos
             n1 = Integer.parseInt(num1.getText().toString());
             n2 = Integer.parseInt(num2.getText().toString());
-            RadioGroup rg=(RadioGroup) findViewById(R.id.operations);//obtenemos la operacion
-            int seleccion=rg.getCheckedRadioButtonId();//obtenemos el id del radiobutton seleccionado
-            RadioButton rdio=(RadioButton) findViewById(seleccion);//creamos un radio button nuevo a partir de esa id
+            int selected=rg.getCheckedRadioButtonId();//obtenemos el id del radiobutton seleccionado
+            RadioButton rdio=(RadioButton) findViewById(selected);//creamos un radio button nuevo a partir de esa id
             String op=rdio.getText().toString();//obtenemos el texto de ese radiobutton
             StringBuilder sol=new StringBuilder();//creamos el StringBuilder que contendrá la solución
 
             if (op.equals("+")){//buscamos la solución y realizamos la operacion correspondiente
                 sol.append(n2+n1);
                 res = n2+n1;
-                opsList.add(new Operation(n1,n2,res,op));
 
             }
             if (op.equals("-")){
                 sol.append(n1-n2);//
                 res = n1-n2;
-                opsList.add(new Operation(n1,n2,res,op));
             }
             if (op.equals("*")){
                 sol.append(n2*n1);
                 res = n2*n1;
-                opsList.add(new Operation(n1,n2,res,op));
             }
             if (op.equals("/")){
                 if (n1 == 0){
@@ -121,10 +122,11 @@ public class MainActivity extends AppCompatActivity {
                     else{
                         sol.append(n1 / n2);
                         res = n1/n2;
-                        opsList.add(new Operation(n1,n2,res,op));
+
                     }
                 }
             }
+            opsList.add(new Operation(n1,n2,res,op));
             result.setText(sol);
         }
         catch(Exception e){  //Detectamos si alguno de los dos esta vacio
@@ -134,31 +136,70 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void reset(View v){
-        EditText num1 = (EditText) findViewById(R.id.num1);
-        EditText num2 = (EditText) findViewById(R.id.num2);
-        EditText result = (EditText) findViewById(R.id.result);
         num1.setText("");
         num2.setText("");
         result.setText("");
     }
 
     public void history(View v){
-        Intent history = new Intent (getApplicationContext(),History.class);
-        history.putExtra("list",(Serializable)opsList); //nombre y valor
-        startActivityForResult(history,100);
+        Intent intent = new Intent (getApplicationContext(),History.class);
+        intent.putExtra("list",(Serializable)opsList); //nombre y valor
+        startActivityForResult(intent,100);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
-        if((requestCode == 100) && (resultCode == 222)){
-            this.opsList.clear();
-            EditText num1 = (EditText) findViewById(R.id.num1);
-            EditText num2 = (EditText) findViewById(R.id. num2);
-            EditText result = (EditText) findViewById(R.id.result);
-            num1.setText("");
-            num2.setText("");
-            result.setText("");
+        if(requestCode == 100){
+            if (resultCode == 222) {//borrar historial
+                this.opsList.clear();
+                Toast.makeText(getApplicationContext(),"Historial borrado",Toast.LENGTH_LONG).show();
+                num1.setText("");
+                num2.setText("");
+                result.setText("");
+            }else if(resultCode==200){//editar operacion
+                int i=getIndex(data);
+                try{
+                    Operation temp=opsList.get(i);
+                    num1.setText(Integer.toString(temp.getNum1()));
+                    num2.setText(Integer.toString(temp.getNum2()));
+                    result.setText(Integer.toString(temp.getResult()));
+                    selectOp(temp.getOp());
+
+                }catch(ArrayIndexOutOfBoundsException e){
+                    Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
+                }
+
+            }else if (resultCode==201){//eliminar operacion del historial
+                int i=getIndex(data);
+                try{
+                    opsList.remove(i);
+                    Toast.makeText(getApplicationContext(),"Operación borrada del historial",Toast.LENGTH_LONG).show();
+                }catch(ArrayIndexOutOfBoundsException e){
+                    Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
+                }
+            }
 
         }
+    }
+
+    private void selectOp(String op){
+        if(op.equals("+")){
+            rg.check(R.id.sum);
+        }else if(op.equals("-")){
+            rg.check(R.id.sub);
+        }else if(op.equals("*")){
+            rg.check(R.id.mult);
+        }else if(op.equals("/")){
+            rg.check(R.id.div);
+        }
+    }
+
+    private int getIndex(Intent data){
+        Bundle extra = data.getExtras();
+        int i=-1;
+        if (extra != null){
+            i=extra.getInt("op");
+        }
+        return i;
     }
 }

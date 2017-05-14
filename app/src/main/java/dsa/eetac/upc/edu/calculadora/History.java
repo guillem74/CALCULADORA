@@ -9,6 +9,9 @@ import android.util.Log;
 import android.os.Debug;
 import android.view.View;
 import android.app.Activity;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,13 +40,14 @@ public class History extends AppCompatActivity {
         lv.setAdapter(arrayAdapter);
 
         // register onClickListener to handle click events on each item
-        /*lv.setOnItemClickListener(new OnItemClickListener()
+        lv.setOnItemClickListener(new OnItemClickListener()
         {
             // argument position gives the index of item which is clicked
             public void onItemClick(AdapterView<?> arg0, View v,int position, long arg3)
             {
+                opManager(position);
             }
-        });*/
+        });
     }
     public void onStart() {
         super.onStart();
@@ -85,20 +89,46 @@ public class History extends AppCompatActivity {
     }
 
     public void delete(View v){
-        Intent delHistory = new Intent (getApplicationContext(),DeleteHistory.class);
-        startActivityForResult(delHistory,101);
+        Intent intent = new Intent (getApplicationContext(),DeleteHistory.class);
+        startActivityForResult(intent,101);
 
     }
 
     protected void onActivityResult(int requestCode,int resultCode,Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-        Intent i= getIntent();
-        if((requestCode==101)&&(resultCode== Activity.RESULT_OK)) {
+        if((requestCode==101)&&(resultCode== Activity.RESULT_OK)) {//borrar historial
             this.list.clear();
             this.l.clear();
-            setResult(222, i);
+            setResult(222);
             finish();
+
+        }else if(requestCode==102){//mensaje de OperationManager activity
+            Bundle extra = data.getExtras();
+
+            if (extra != null){
+                Intent intent = getIntent();
+                String temp=extra.getString("op");;
+                int i=l.indexOf(temp);
+                intent.putExtra("op",i);
+
+                if(resultCode==200){//editar operación
+                    setResult(200,intent);
+                    finish();
+
+                }else if(resultCode==201){//eliminar opearion del historial
+                    list.remove(i);
+                    l.remove(i);
+                    setResult(201,intent);
+                    finish();
+                }
+            }
         }
+    }
+
+    private void opManager(int position){
+        Intent intent = new Intent (getApplicationContext(),OperationManager.class);
+        intent.putExtra("op",l.get(position));
+        startActivityForResult(intent,102);
     }
 
 }

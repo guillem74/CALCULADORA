@@ -1,19 +1,28 @@
 package dsa.eetac.upc.edu.calculadora;
 
+import android.content.Intent;
+import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.os.Debug;
 import android.view.View;
-import android.content.Intent;
+import android.widget.TextView;
 
-public class DeleteHistory extends AppCompatActivity {
+public class OperationManager extends AppCompatActivity {
+
     private String tag="Events";
+    private String operation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_delete_history);
+        setContentView(R.layout.activity_operation_manager);
+        Bundle extra = getIntent().getExtras();
+        if (extra != null){
+            operation=extra.getString("op");
+        }
+        TextView op= (TextView)findViewById(R.id.op);
+        op.setText(operation);
     }
 
     public void onStart() {
@@ -55,15 +64,19 @@ public class DeleteHistory extends AppCompatActivity {
         Debug.stopMethodTracing();
     }
 
-    public void cancel(View v) {
+    //editar operación
+    public void edit(View v){
         Intent intent = getIntent();
-        setResult(RESULT_CANCELED, intent);
+        intent.putExtra("op",operation);
+        setResult(200, intent);
         finish();
     }
 
-    public void delete(View v) {
+    //borrar operacion del historial
+    public void delete(View v){
         Intent intent = getIntent();
-        setResult(RESULT_OK, intent);
+        intent.putExtra("op",operation);
+        setResult(201, intent);
         finish();
     }
 }

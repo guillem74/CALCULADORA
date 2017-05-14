@@ -7,8 +7,8 @@ import java.io.Serializable;
  */
 
 public class Operation implements Serializable {
-    int num1,num2, result;
-    String op;
+    private int num1,num2, result;
+    private String op;
 
     public Operation(){}
     public Operation(int num1, int num2, int result, String op){
