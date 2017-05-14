@@ -5,13 +5,16 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.widget.ListView;
 import android.widget.ArrayAdapter;
+import android.util.Log;
+import android.os.Debug;
 import android.view.View;
-import android.*;
+import android.app.Activity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class History extends AppCompatActivity {
+    private String tag="Events";
     private List<Operation> list;
     private List<String> l;
     private ListView lv;
@@ -20,14 +23,6 @@ public class History extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
-        /*Bundle extra = getIntent().getExtras();
-        if (extra == null){
-        }
-        else{
-            Operations ops = (Operations) extra.get("list");
-            list = ops.getOpsList(); //obtener la lista
-            System.out.println();
-        }*/
         lv = (ListView) findViewById(R.id.listV);
         Intent i = getIntent();
         list = (List<Operation>) i.getSerializableExtra("list");
@@ -47,11 +42,63 @@ public class History extends AppCompatActivity {
             // argument position gives the index of item which is clicked
             public void onItemClick(AdapterView<?> arg0, View v,int position, long arg3)
             {
-                String selectedmovie=list.get(position);
-                Toast.makeText(getApplicationContext(), "Movie Selected : "+selectedmovie,   Toast.LENGTH_LONG).show();
             }
         });*/
     }
+    public void onStart() {
+        super.onStart();
+        Log.d(tag, "event onStart()");
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        Log.d(tag, "event onResume()");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();  // Always call the superclass method first
+        Log.d(tag, "event onPause()");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();  // Always call the superclass method first
+        Log.d(tag, "event onStop()");
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();  // Always call the superclass method first
+        Log.d(tag, "event onRestart()");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();  // Always call the superclass
+        // Stop method tracing that the activity started during onCreate()
+        Log.d(tag, "event onDestroy()");
+        Debug.stopMethodTracing();
+    }
+
+    public void delete(View v){
+        Intent delHistory = new Intent (getApplicationContext(),DeleteHistory.class);
+        startActivityForResult(delHistory,101);
+
+    }
+
+    protected void onActivityResult(int requestCode,int resultCode,Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        Intent i= getIntent();
+        if((requestCode==101)&&(resultCode== Activity.RESULT_OK)) {
+            this.list.clear();
+            this.l.clear();
+            setResult(222, i);
+            finish();
+        }
+    }
 
 }

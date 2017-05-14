@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.os.Debug;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,42 @@ public class MainActivity extends AppCompatActivity {
         Log.d(tag,"Event a onTetart()");
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+       /* try {
+            Bundle extra = getIntent().getExtras();
+            String ex=extra.getString("borra");
+            if (ex == "ok") {
+                operaciones = null;
+            }
+        }
+        catch (Exception e){}***/
+        Log.d(tag, "event onResume()");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();  // Always call the superclass method first
+        Log.d(tag, "event onPause()");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();  // Always call the superclass method first
+        Log.d(tag, "event onStop()");
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();  // Always call the superclass
+        // Stop method tracing that the activity started during onCreate()
+        Log.d(tag, "event onDestroy()");
+        Debug.stopMethodTracing();
+    }
+
     public void result(View v){
         EditText result = (EditText) findViewById(R.id.result);//Obtenemos el valor del textView result
         EditText num1 = (EditText) findViewById(R.id.num1);//Obtenemos los valores de los campos donde hemos introducido los valores
@@ -63,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
             if (op.equals("-")){
-                sol.append(n1-n2);
+                sol.append(n1-n2);//
                 res = n1-n2;
                 opsList.add(new Operation(n1,n2,res,op));
             }
@@ -100,67 +137,27 @@ public class MainActivity extends AppCompatActivity {
         EditText num1 = (EditText) findViewById(R.id.num1);
         EditText num2 = (EditText) findViewById(R.id.num2);
         EditText result = (EditText) findViewById(R.id.result);
-        num1.setText("0");
-        num2.setText("0");
-        result.setText("0");
+        num1.setText("");
+        num2.setText("");
+        result.setText("");
     }
 
     public void history(View v){
         Intent history = new Intent (getApplicationContext(),History.class);
-        Operations ops =new Operations();
-        ops.setOpsList(opsList);
         history.putExtra("list",(Serializable)opsList); //nombre y valor
         startActivityForResult(history,100);
-       /* Intent mIntent = new Intent(MainActivity.this, History.class);
-        mIntent.putParcelableArrayListExtra("list", opsList);
-        startActivity(mIntent);*/
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
-        if((requestCode == 100) && (resultCode == Activity.RESULT_OK)){
-            Bundle resultAct = data.getExtras();
-            String strestult = resultAct.getString("selected");
+        if((requestCode == 100) && (resultCode == 222)){
+            this.opsList.clear();
             EditText num1 = (EditText) findViewById(R.id.num1);
-            EditText num2 = (EditText) findViewById(R.id.num2);
-            RadioGroup rg= (RadioGroup)findViewById(R.id.operations);
-            TextView result= (TextView)findViewById(R.id.result);
-            String[] fresult=null;
-            String[] stresult1= resultAct.getString("selected").split("=");
-            if(stresult1[0].contains("+")){
-                fresult= stresult1[0].split("\\+");
-                rg.check(R.id.sum);
-
-            }
-            if(stresult1[0].contains("-")){
-                fresult= stresult1[0].split("-");
-                rg.check(R.id.sub);
-
-            }
-            if(stresult1[0].contains("*")){
-                fresult= stresult1[0].split("\\*");
-                rg.check(R.id.mult);
-
-            }
-            if(stresult1[0].contains("/")){
-                fresult= stresult1[0].split("/");
-                rg.check(R.id.div);
-
-            }
-            num1.setText(fresult[1]);
-            num2.setText(fresult[0]);
-            result.setText("0");
-        }
-        else if (resultCode == 222){
-
-            //this.operaciones.setLength(0);
-            EditText text1 = (EditText) findViewById(R.id.num1);
-            EditText text2 = (EditText) findViewById(R.id.num2);
-            TextView result = (TextView) findViewById(R.id.result);
-            text1.setText("0");
-            text2.setText("0");
-            result.setText("0");
-
+            EditText num2 = (EditText) findViewById(R.id. num2);
+            EditText result = (EditText) findViewById(R.id.result);
+            num1.setText("");
+            num2.setText("");
+            result.setText("");
 
         }
     }
